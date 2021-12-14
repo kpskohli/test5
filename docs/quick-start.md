@@ -4,21 +4,11 @@ This getting started guide will help you deploy your first EKS environment using
 
 ## Prerequisites:
 
-Ensure that you have installed the following tools in your Mac or Windows Laptop before start working with this module and run Terraform Plan and Apply
+Ensure that you have installed the following tools installed on your local machine before working with this module.
 
 1. [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-3. [kubectl](https://Kubernetes.io/docs/tasks/tools/)
+3. [kubectl](https://kubernetes.io/docs/tasks/tools/)
 4. [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
-
-## Deployment Steps
-
-The following steps will walk you through the deployment of an example [DEV cluster](../deploy/eks-cluster-with-new-vpc/main.tf) configuration.
-This configuration will deploy a private EKS cluster with public and private subnets.
-One managed node group and a Fargate profile for the default namespace will be placed in private subnets. The ALB created by the AWS LB Ingress controller will be placed in Public subnets. The example will also deploy the following Kubernetes add-ons
-
-✅  AWS LB Ingress Controller\
-✅  Metrics Server\
-✅  Cluster Autoscaler
 
 ### Clone the repo
 
@@ -31,7 +21,7 @@ git clone https://github.com/aws-samples/aws-eks-accelerator-for-terraform.git
 CD into the sample directory.
 
 ```shell script
-cd deploy/eks-cluster-with-new-vpc/
+cd examples/eks-cluster-with-new-vpc/
 ```
 
 Initialize the working directory with configuration files.
@@ -48,7 +38,7 @@ Verify the resources that will be created by this execution.
 terraform plan
 ```
 
-### Finally, Terraform APPLY
+### Run Terraform APPLY
 
 Deploy your EKS environment.
 
@@ -56,7 +46,7 @@ Deploy your EKS environment.
 terraform apply
 ```
 
-### Configure kubectl and test cluster
+### Configure kubectl
 
 Details for your EKS Cluster can be extracted from terraform output or from AWS Console to get the name of cluster.
 
@@ -66,16 +56,22 @@ This following command used to update the `kubeconfig` in your local machine whe
 $ aws eks --region <region> update-kubeconfig --name <cluster-name>
 ```
 
-## Validation
+### Validate your deployment
 
-### List all the worker nodes by running the command below
+List all the worker nodes by running the following:
 
 ```
 $ kubectl get nodes
 ```
 
-### List all the pods running in kube-system namespace
+List all the pods running in kube-system namespace:
 
 ```
 $ kubectl get pods -n kube-system
 ```
+
+Congratulations! You have deployed your first EKS environment with the SSP on EKS for Terraform.
+
+## Examples
+
+To view additional examples for how you can leverage this framework, see the [examples](./examples) directory.

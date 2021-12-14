@@ -1,89 +1,135 @@
-# Amazon EKS SSP for Terraform
+# Shared Services Platform (SSP) on EKS for Terraform
 
 ![GitHub](https://img.shields.io/github/license/aws-samples/aws-eks-accelerator-for-terraform)
 [![e2e-test](https://github.com/aws-samples/aws-eks-accelerator-for-terraform/actions/workflows/e2e-test.yml/badge.svg)](https://github.com/aws-samples/aws-eks-accelerator-for-terraform/actions/workflows/e2e-test.yml)
 [![terrascan](https://github.com/aws-samples/aws-eks-accelerator-for-terraform/actions/workflows/terrascan.yml/badge.svg)](https://github.com/aws-samples/aws-eks-accelerator-for-terraform/actions/workflows/terrascan.yml)
 [![tfsec](https://github.com/aws-samples/aws-eks-accelerator-for-terraform/actions/workflows/tfsec-analysis.yml/badge.svg)](https://github.com/aws-samples/aws-eks-accelerator-for-terraform/actions/workflows/tfsec-analysis.yml)
 
-> **Note**: EKS SSP for Terraform is in active development and should be considered a **pre-production** framework. Backwards incompatible Terraform changes are possible in future releases and support is best-effort by the EKS SSP community.
+> **Note**: SSP on EKS for Terraform is in active development and should be considered a **pre-production** framework. Backwards incompatible Terraform changes are possible in future releases and support is best-effort by the EKS SSP community.
 
-Welcome to the Amazon EKS Shared Services Platform (SSP) for Terraform.
+Welcome to the Shared Services Platform (SSP) on EKS for Terraform.
 
 This repository contains the source code for a Terraform framework that aims to accelerate the delivery of a batteries-included, multi-tenant container platform on top of Amazon EKS. This framework can be used by AWS customers, partners, and internal AWS teams to implement the foundational structure of a SSP according to AWS best practices and recommendations.
 
 This project leverages the community [terraform-aws-eks](https://github.com/terraform-aws-modules/terraform-aws-eks) modules for deploying EKS Clusters.
 
-## Getting Started
-
-The easiest way to get started with this framework is to follow our [Getting Started guide](./docs/getting-started.md).
-
 ## Documentation
 
 For complete project documentation, please visit our [documentation directory](./docs).
 
-## Patterns
+## Quick Start 
 
-To view examples for how you can leverage this framework, see the [deploy](./deploy) directory.
+Ensure that you have installed the following tools installed on your local machine before working with this module.
 
-## Usage Example
+1. [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+3. [kubectl](https://kubernetes.io/docs/tasks/tools/)
+4. [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-The below demonstrates how you can leverage this framework to deploy an EKS cluster, a managed node group, and various Kubernetes add-ons.
+### Clone the repo
 
-```hcl
-module "eks-ssp" {
-    source = "git@github.com:aws-samples/aws-eks-accelerator-for-terraform.git"
-
-    # EKS CLUSTER
-    kubernetes_version       = "1.21"
-    vpc_id             = "<vpcid>"     # Enter VPC ID
-    private_subnet_ids = ["<subnet-a>", "<subnet-b>", "<subnet-c>"]     # Enter Private Subnet IDs
-
-    # EKS MANAGED ADD-ON VARIABLES
-    enable_eks_addon_vpc_cni = true
-    enable_eks_addon_coredns = true
-    enable_eks_addon_kube_proxy = true
-
-    # KUBERNETES ADD-ON VARIABLES
-    cluster_autoscaler_enable           = true
-    metrics_server_enable               = true
-    aws_lb_ingress_controller_enable    = true
-    aws_for_fluentbit_enable             = true
-    cert_manager_enable                 = true
-    nginx_ingress_controller_enable     = true
-
-    # EKS MANAGED NODE GROUPS
-    managed_node_groups = {
-        mg_m4l = {
-            node_group_name = "managed-ondemand"
-            instance_types  = ["m4.large"]
-            subnet_ids      = ["<subnet-a>", "<subnet-b>", "<subnet-c>"]
-        }
-    }
-}
+```shell script
+git clone https://github.com/aws-samples/aws-eks-accelerator-for-terraform.git
 ```
 
-The code above will provision the following:
+### Run Terraform INIT
 
-✅  A new EKS Cluster with a managed node group.\
-✅  EKS managed add-ons `vpc-cni`, `CoreDNS`, and `kube-proxy`.\
-✅  `Cluster Autoscaler` and `Metrics Server` for scaling your workloads.\
-✅  `Fluent Bit` for routing metrics.\
-✅  `AWS Load Balancer Controller` for distributing traffic.\
-✅  `cert-manager` for managing SSL/TLS certificates.\
-✅  `Nginx` for managing ingress.
+CD into the sample directory.
+
+```shell script
+cd examples/eks-cluster-with-new-vpc/
+```
+
+Initialize the working directory with configuration files.
+
+```shell script
+terraform init
+```
+
+### Run Terraform PLAN
+
+Verify the resources that will be created by this execution.
+
+```shell script
+terraform plan
+```
+
+### Run Terraform APPLY
+
+Deploy your EKS environment.
+
+```shell script
+terraform apply
+```
+
+### Configure kubectl
+
+Details for your EKS Cluster can be extracted from terraform output or from AWS Console to get the name of cluster.
+
+This following command used to update the `kubeconfig` in your local machine where you run `kubectl` commands to interact with your EKS Cluster.
+
+```
+$ aws eks --region <region> update-kubeconfig --name <cluster-name>
+```
+
+### Validate your deployment
+
+List all the worker nodes by running the following:
+
+```
+$ kubectl get nodes
+```
+
+List all the pods running in kube-system namespace:
+
+```
+$ kubectl get pods -n kube-system
+```
+
+Congratulations! You have deployed your first EKS environment with the SSP on EKS for Terraform.
+
+## Examples
+
+To view additional examples for how you can leverage this framework, see the [examples](./examples) directory.
 
 ## Add-ons
 
-This framework provides out of the box support for a wide range of popular Kubernetes add-ons. By default, the [Terraform Helm provider](https://github.com/hashicorp/terraform-provider-helm) is used to deploy add-ons with publicly available [Helm Charts](https://artifacthub.io/).
-The framework provides support however for leveraging self-hosted Helm Chart as well.
+The framework provides out of the box support for deploying a wide range of popular Kubernetes add-ons into your EKS cluster. The add-ons and their description can be found in the table below:
+
+| Add-on    | Description   |
+|-----------|---------------|
+| [Agones](./agones) | An open source, batteries-included, multiplayer dedicated game server scaling and orchestration platform that can run anywhere Kubernetes can run. |
+| [ArgoCD](./argocd) | A declarative, GitOps continuous delivery tool for Kubernetes. |
+| [AWS for Fluent Bit](./aws-for-fluent-bit) | Send container logs to AWS services for log storage and analytics. |
+| [AWS Load Balancer Controller](./aws-load-balancer-controller) | Manages AWS Elastic Load Balancers for a Kubernetes cluster.  |
+| [AWS Node Termination Handler](./aws-node-termination-handler) | Ensures that the Kubernetes control plane responds appropriately to events that can cause your EC2 instance to become unavailable. |
+| [AWS Distro for Open Telemetry](./aws-open-telemetry) | A secure, production-ready, AWS-supported distribution of the OpenTelemetry project. |
+| [cert-manager](./cert-manager) | Adds certificates and certificate issuers as resource types in Kubernetes clusters, and simplifies the process of obtaining, renewing and using those certificates. |
+| [Cluster Autoscaler](./cluster-autoscaler) | Automatically adjusts the size of the Kubernetes cluster. |
+| [EKS Add-ons](./eks-add-ons) | Installation and management of a curated set of add-ons for Amazon EKS clusters. |
+| [Fargate Fluent Bit](./fargate-fluent-bit) | Send Fargate container logs to AWS services for log storage and analytics. |
+| [Ingress Nginx](./ingress-nginx) | Manages Ingress resources in an EKS cluster. |
+| [Keda](./keda) | An event-driven autoscaler for Kubernetes |
+| [Metrics Server](./metrics-server) | A scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines |
+| [Prometheus](./prometheus) | An open-source monitoring system with a dimensional data model, flexible query language, efficient time series database and modern alerting approach. |
+| [Spark K8s Operator](./spark-k8s-operator) | Run Spark applications on a Kubernetes cluster. |
+| [Traefik](./traefik) | A modern HTTP reverse proxy and load balancer. |
+| [Vertical Pod Autoscaler](./vertical-pod-autoscaler) | Automatically adjusts the CPU and memory reservations for your pods to help "right size" your applications. |
+| [Yunikorn](./yunikorn) |Rich scheduling capabilities on Kubernetes. |
+
+By default, the [Terraform Helm provider](https://github.com/hashicorp/terraform-provider-helm) is used to deploy add-ons with publicly available [Helm Charts](https://artifacthub.io/). The framework provides support however for leveraging self-hosted Helm Chart as well.
 
 For complete documentation on deploying add-ons, please visit our [add-on documentation](./docs/add-ons/index.md)
 
-## Submodules
+## AWS Services 
 
-The root module calls into several submodules which provides support for deploying and integrating a number of external AWS services that can be used in concert with EKS. This included Amazon Managed Prometheus and EMR with EKS etc.
+The framework provides out of the box support for deploying additional AWS services and leveraging them in concert with your EKS cluster. Those services and their functionality can be found in the table below:
 
-For complete documentation on deploying external services, please visit our submodules documentation.
+| Service | Description |
+|---------|-------------|
+| [AWS Managed Service for Prometheus](https://aws.amazon.com/prometheus/) | Deploy an AMP workspace and configure your EKS clusters to route metrics to that workspace. 
+| [EMR on EKS](https://docs.aws.amazon.com/emr/latest/EMR-on-EKS-DevelopmentGuide/emr-eks.html) | Automate the provisioning and management of open-source big data frameworks on EKS
+
+For complete documentation on deploying external services, please visit our [modules](./docs/modules) documentation.
 
 ## Motivation
 

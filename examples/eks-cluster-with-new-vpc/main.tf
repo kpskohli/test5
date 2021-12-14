@@ -102,7 +102,7 @@ module "aws-eks-accelerator-for-terraform" {
     }
   }
 
-  # FARGATE
+  # FARGATE PROFILES
   fargate_profiles = {
     default = {
       fargate_profile_name = "default"
@@ -132,5 +132,4 @@ module "aws-eks-accelerator-for-terraform" {
   aws_lb_ingress_controller_enable = true
   metrics_server_enable            = true
   cluster_autoscaler_enable        = true
-
 }

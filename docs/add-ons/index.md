@@ -6,20 +6,24 @@ The framework currently provides support for the following add-ons:
 
 | Add-on    | Description   |
 |-----------|-----------------
-| [Agones](./agones) | Deploys Agones into an EKS cluster. |
-| [ArgoCD](./argocd) | Deploys ArgoCD into an EKS cluster. |
-| [AWS for Fluent Bit](./aws-for-fluent-bit) | Deploys Fluent Bit into an EKS cluster. |
-| [AWS Load Balancer Controller](./fargate-fluent-bit) | Deploys the AWS Load Balancer Controller into an EKS cluster. |
-| [AWS Distro for Open Telemetry](./aws-open-telemetry) | Deploys the AWS Open Telemetry Collector into an EKS cluster. |
-| [cert-manager](./cert-manager) | Deploys cert-manager into an EKS cluster. |
-| [Cluster Autoscaler](./cluster-autoscaler) | Deploys the standard cluster autoscaler into an EKS cluster. |
-| [Fargate Fluent Bit](./fargate-fluent-bit) | Adds Fluent Bit support for EKS Fargate |
-| [EKS Managed Add-ons](./managed-add-ons) | Enables EKS managed add-ons. |
-| [Keda](./keda) | Deploys Keda into an EKS cluster. |
-| [Metrics Server](./metrics-server) | Deploys the Kubernetes Metrics Server into an EKS cluster. |
-| [Nginx](./nginx) | Deploys the NGINX Ingress Controller into an EKS cluster. |
-| [Prometheus](./prometheus) | Deploys Prometheus into an EKS cluster. |
-| [Traefik](./traefik) | Deploys Traefik Proxy into an EKS cluster.
+| [Agones](./agones) | An open source, batteries-included, multiplayer dedicated game server scaling and orchestration platform that can run anywhere Kubernetes can run. |
+| [ArgoCD](./argocd) | A declarative, GitOps continuous delivery tool for Kubernetes. |
+| [AWS for Fluent Bit](./aws-for-fluent-bit) | Send container logs to AWS services for log storage and analytics. |
+| [AWS Load Balancer Controller](./aws-load-balancer-controller) | Manages AWS Elastic Load Balancers for a Kubernetes cluster.  |
+| [AWS Node Termination Handler](./aws-node-termination-handler) | Ensures that the Kubernetes control plane responds appropriately to events that can cause your EC2 instance to become unavailable. |
+| [AWS Distro for Open Telemetry](./aws-open-telemetry) | A secure, production-ready, AWS-supported distribution of the OpenTelemetry project. |
+| [cert-manager](./cert-manager) | Adds certificates and certificate issuers as resource types in Kubernetes clusters, and simplifies the process of obtaining, renewing and using those certificates. |
+| [Cluster Autoscaler](./cluster-autoscaler) | Automatically adjusts the size of the Kubernetes cluster. |
+| [EKS Add-ons](./eks-add-ons) | Installation and management of a curated set of add-ons for Amazon EKS clusters. |
+| [Fargate Fluent Bit](./fargate-fluent-bit) | Send Fargate container logs to AWS services for log storage and analytics. |
+| [Ingress Nginx](./ingress-nginx) | Manages Ingress resources in an EKS cluster. |
+| [Keda](./keda) | An event-driven autoscaler for Kubernetes |
+| [Metrics Server](./metrics-server) | A scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines |
+| [Prometheus](./prometheus) | An open-source monitoring system with a dimensional data model, flexible query language, efficient time series database and modern alerting approach. |
+| [Spark K8s Operator](./spark-k8s-operator) | Run Spark applications on a Kubernetes cluster. |
+| [Traefik](./traefik) | A modern HTTP reverse proxy and load balancer. |
+| [Vertical Pod Autoscaler](./vertical-pod-autoscaler) | Automatically adjusts the CPU and memory reservations for your pods to help "right size" your applications. |
+| [Yunikorn](./yunikorn) |Rich scheduling capabilities on Kubernetes. |
 
 ## Add-on Management
 
