@@ -56,7 +56,7 @@ module "prometheus" {
   service_account_amp_ingest_name = local.service_account_amp_ingest_name
   manage_via_gitops               = var.argocd_manage_add_ons
 
-  depends_on = [module.aws_eks]
+  depends_on = [module.aws_eks, module.vpa]
 }
 
 module "aws_load_balancer_controller" {

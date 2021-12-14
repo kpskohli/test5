@@ -9,7 +9,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.6.1"
+      version = ">= 2.7.1"
     }
     helm = {
       source  = "hashicorp/helm"
@@ -17,6 +17,8 @@ terraform {
     }
   }
 }
+
+data "aws_region" "current" {}
 
 provider "aws" {
   region = data.aws_region.current.id
@@ -29,73 +31,55 @@ terraform {
   }
 }
 
-data "aws_region" "current" {}
-
-data "aws_availability_zones" "available" {}
-
-locals {
-  tenant      = "aws001"  # AWS account name or unique id for tenant
-  environment = "preprod" # Environment area eg., preprod or prod
-  zone        = "dev"     # Environment with in one sub_tenant or business unit
-
-  kubernetes_version = "1.21"
-
-  vpc_cidr     = "10.0.0.0/16"
-  vpc_name     = join("-", [local.tenant, local.environment, local.zone, "vpc"])
-  cluster_name = join("-", [local.tenant, local.environment, local.zone, "eks"])
-
-  terraform_version = "Terraform v1.0.1"
-}
-
-module "aws_vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "v3.2.0"
-
-  name = local.vpc_name
-  cidr = local.vpc_cidr
-  azs  = data.aws_availability_zones.available.names
-
-  public_subnets  = [for k, v in data.aws_availability_zones.available.names : cidrsubnet(local.vpc_cidr, 8, k)]
-  private_subnets = [for k, v in data.aws_availability_zones.available.names : cidrsubnet(local.vpc_cidr, 8, k + 10)]
-
-  enable_nat_gateway   = true
-  create_igw           = true
-  enable_dns_hostnames = true
-  single_nat_gateway   = true
-
-  public_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = "1"
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"             = "1"
-  }
-
-}
 #---------------------------------------------------------------
 # Example to consume aws-eks-accelerator-for-terraform module
 #---------------------------------------------------------------
+
 module "aws-eks-accelerator-for-terraform" {
   source = "../.."
 
+  # Environment Configuration
   tenant            = local.tenant
   environment       = local.environment
   zone              = local.zone
   terraform_version = local.terraform_version
 
-  # EKS Cluster VPC and Subnet mandatory config
+  #---------------------------------------------------------------
+  # VPC/SUBNETS
+  #---------------------------------------------------------------
+
   vpc_id             = module.aws_vpc.vpc_id
   private_subnet_ids = module.aws_vpc.private_subnets
 
-  # EKS CONTROL PLANE VARIABLES
+  #---------------------------------------------------------------
+  # ADDONS
+  #---------------------------------------------------------------
+
+  # EKS ADD-ONS
+  enable_eks_addon_vpc_cni            = true
+  enable_eks_addon_coredns            = true
+  enable_eks_addon_kube_proxy         = true
+  enable_eks_addon_aws_ebs_csi_driver = true
+
+  # KUBERNETES ADD-ONS
+  argocd_enable                    = true
+  aws_lb_ingress_controller_enable = true
+  cert_manager_enable              = true
+  cluster_autoscaler_enable        = true
+  metrics_server_enable            = true
+  nginx_ingress_controller_enable  = true
+
+  #---------------------------------------------------------------
+  # CLUSTER CONFIG
+  #---------------------------------------------------------------
+
+  # EKS CONTROL PLANE CONFIG
   create_eks         = true
   kubernetes_version = local.kubernetes_version
 
-  # EKS MANAGED NODE GROUPS
+  # MANAGED NODE GROUPS
   managed_node_groups = {
-    mg_4 = {
+    mng = {
       node_group_name = "managed-ondemand"
       instance_types  = ["m4.large"]
       subnet_ids      = module.aws_vpc.private_subnets
@@ -115,21 +99,8 @@ module "aws-eks-accelerator-for-terraform" {
             env         = "fargate"
           }
       }]
-      subnet_ids = module.aws_vpc.private_subnets
-      additional_tags = {
-        ExtraTag = "Fargate"
-      }
-    },
+      subnet_ids      = module.aws_vpc.private_subnets
+      additional_tags = { ExtraTag = "Fargate" }
+    }
   }
-
-  # EKS Managed Add-ons
-  enable_eks_addon_vpc_cni            = true
-  enable_eks_addon_coredns            = true
-  enable_eks_addon_kube_proxy         = true
-  enable_eks_addon_aws_ebs_csi_driver = true
-
-  # KUBERNETES Add-ons
-  aws_lb_ingress_controller_enable = true
-  metrics_server_enable            = true
-  cluster_autoscaler_enable        = true
 }
