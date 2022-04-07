@@ -249,6 +249,12 @@ variable "amazon_prometheus_workspace_endpoint" {
   description = "AWS Managed Prometheus WorkSpace Endpoint"
 }
 
+variable "amazon_prometheus_workspace_region" {
+  type        = string
+  default     = null
+  description = "AWS Managed Prometheus WorkSpace Region"
+}
+
 #-----------PROMETHEUS-------------
 variable "enable_prometheus" {
   description = "Enable Community Prometheus add-on"
@@ -673,71 +679,9 @@ variable "yunikorn_irsa_policies" {
   description = "IAM policy ARNs for Yunikorn IRSA"
 }
 
-variable "yunikorn_irsa_permissions_boundary" {
-  type        = string
-  default     = ""
-  description = "IAM Policy ARN for IRSA IAM role permissions boundary"
-}
-
-#-----------Argo Rollouts ADDON-------------
-variable "enable_argo_rollouts" {
+#-----------AWS Observability patterns-------------
+variable "enable_aws_observability_pattern_jmx" {
   type        = bool
   default     = false
-  description = "Enable Argo Rollouts add-on"
-}
-
-variable "argo_rollouts_helm_config" {
-  type        = any
-  default     = null
-  description = "Argo Rollouts Helm Chart config"
-}
-
-variable "argo_rollouts_irsa_permissions_boundary" {
-  type        = string
-  default     = ""
-  description = "IAM Policy ARN for IRSA IAM role permissions boundary"
-}
-
-variable "argo_rollouts_irsa_policies" {
-  type        = list(string)
-  default     = []
-  description = "IAM policy ARNs for Argo Rollouts IRSA"
-}
-
-#-----------Kubernetes Dashboard ADDON-------------
-variable "enable_kubernetes_dashboard" {
-  type        = bool
-  default     = false
-  description = "Enable Kubernetes Dashboard add-on"
-}
-
-variable "kubernetes_dashboard_helm_config" {
-  type        = any
-  default     = null
-  description = "Kubernetes Dashboard Helm Chart config"
-}
-
-variable "kubernetes_dashboard_irsa_policies" {
-  type        = list(string)
-  default     = []
-  description = "IAM policy ARNs for Kubernetes Dashboard IRSA"
-}
-
-variable "kubernetes_dashboard_irsa_permissions_boundary" {
-  type        = string
-  default     = ""
-  description = "IAM Policy ARN for IRSA IAM role permissions boundary"
-}
-
-#-----------OpenTelemetry patterns-------------
-variable "enable_otel_operator_jmx" {
-  type        = bool
-  default     = false
-  description = "Enable metrics for JMX workloads and automatic Grafana Dashboards"
-}
-
-variable "otel_operator_jmx_helm_config" {
-  type        = any
-  default     = null
-  description = "OpenTelemtry Helm Chart config"
+  description = "Enable metrics for JMX workloads, automatic Managed Grafana Dashboards and AMP alerts"
 }

@@ -282,10 +282,9 @@ module "yunikorn" {
   addon_context     = local.addon_context
 }
 
-module "otel_jmx" {
-  count                                = var.enable_otel_operator_jmx ? 1 : 0
-  source                               = "./aws-opentelemetry-eks-jmx"
-  helm_config                          = var.otel_operator_jmx_helm_config
+module "aws_observability_pattern_jmx" {
+  count                                = var.enable_aws_observability_pattern_jmx ? 1 : 0
+  source                               = "./aws-observability-pattern-jmx"
   amazon_prometheus_workspace_endpoint = var.amazon_prometheus_workspace_endpoint
   amazon_prometheus_workspace_region   = var.amazon_prometheus_workspace_region
   addon_context                        = local.addon_context
