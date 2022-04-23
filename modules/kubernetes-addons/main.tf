@@ -219,6 +219,14 @@ module "prometheus" {
   addon_context                        = local.addon_context
 }
 
+module "secrets_store_csi_driver" {
+  count             = var.enable_secrets_store_csi_driver ? 1 : 0
+  source            = "./secrets-store-csi-driver"
+  helm_config       = var.secrets_store_csi_driver_helm_config
+  manage_via_gitops = var.argocd_manage_add_ons
+  addon_context     = local.addon_context
+}
+
 module "spark_k8s_operator" {
   count             = var.enable_spark_k8s_operator ? 1 : 0
   source            = "./spark-k8s-operator"

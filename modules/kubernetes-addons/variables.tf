@@ -672,3 +672,16 @@ variable "yunikorn_irsa_policies" {
   default     = []
   description = "IAM policy ARNs for Yunikorn IRSA"
 }
+
+#--------Secrets Store CSI Driver ADDON--------
+variable "enable_secrets_store_csi_driver" {
+  type        = bool
+  default     = false
+  description = "Enable Secrets Store CSI Driver"
+}
+
+variable "secrets_store_csi_driver_helm_config" {
+  type        = any
+  default     = null
+  description = "Secrets Store CSI Driver Helm Chart config"
+}

@@ -36,7 +36,7 @@ For complete project documentation, please visit the [Spark K8S Operator documen
 The following properties are made available for use when managing the add-on via GitOps
 
 ```
-sparkK8sOperator = {
+sparkOperator = {
   enable = true
 }
 ```
